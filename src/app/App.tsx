@@ -1,19 +1,67 @@
 import { useState } from "react";
-import { DSButton } from "./components/ds-button";
-import { DSInput } from "./components/ds-input";
-import { DSBadge } from "./components/ds-badge";
-import { DSCard, DSCardHeader, DSCardTitle, DSCardDescription, DSCardContent, DSCardFooter } from "./components/ds-card";
-import { DSAlert, DSAlertTitle, DSAlertDescription } from "./components/ds-alert";
-import { DSAvatar } from "./components/ds-avatar";
-import { DSCheckbox } from "./components/ds-checkbox";
-import { DSSwitch } from "./components/ds-switch";
-import { DSRadio } from "./components/ds-radio";
-import { DSTextarea } from "./components/ds-textarea";
-import { DSSelect } from "./components/ds-select";
-import { DSProgress } from "./components/ds-progress";
-import { DSSpinner } from "./components/ds-spinner";
-import { DSSkeleton } from "./components/ds-skeleton";
-import { Copy, Check } from "lucide-react";
+import { Copy, Check, CheckCircle2, AlertTriangle, AlertCircle, Info } from "lucide-react";
+import { Button } from "./components/ui/button";
+import { Input } from "./components/ui/input";
+import { Textarea } from "./components/ui/textarea";
+import { Badge } from "./components/ui/badge";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "./components/ui/card";
+import { Alert, AlertTitle, AlertDescription } from "./components/ui/alert";
+import { Avatar, AvatarFallback, AvatarImage } from "./components/ui/avatar";
+import { Checkbox } from "./components/ui/checkbox";
+import { Switch } from "./components/ui/switch";
+import { RadioGroup, RadioGroupItem } from "./components/ui/radio-group";
+import { Label } from "./components/ui/label";
+import { Progress } from "./components/ui/progress";
+import { Skeleton } from "./components/ui/skeleton";
+import { ChevronDown } from "lucide-react";
+
+// Inline Spinner — no ui/ equivalent, preserved from DSSpinner
+function Spinner({ size = "md" }: { size?: "sm" | "md" | "lg" }) {
+  const sizes = { sm: "h-4 w-4", md: "h-8 w-8", lg: "h-12 w-12" };
+  const borders = { sm: "2px", md: "2px", lg: "3px" };
+  return (
+    <div
+      className={`animate-spin rounded-full ${sizes[size]}`}
+      style={{
+        background: `linear-gradient(white, white) padding-box, linear-gradient(135deg, var(--primary-500) 0%, var(--secondary-500) 100%) border-box`,
+        border: `${borders[size]} solid transparent`,
+        borderTopColor: "white",
+      }}
+    />
+  );
+}
+
+// Inline NativeSelect — preserves native <select> UX (same as DSSelect)
+function NativeSelect({ error, children, ...props }: React.SelectHTMLAttributes<HTMLSelectElement> & { error?: boolean }) {
+  return (
+    <div className="relative">
+      <select
+        className={[
+          "flex h-10 w-full appearance-none rounded-[var(--radius)] border border-border bg-input-background px-3 py-2 pr-10 text-foreground transition-colors",
+          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:border-transparent",
+          "disabled:cursor-not-allowed disabled:opacity-50",
+          error ? "border-destructive focus-visible:ring-destructive" : "",
+        ].join(" ")}
+        {...props}
+      >
+        {children}
+      </select>
+      <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+    </div>
+  );
+}
+
+// Colored progress bar for non-default variants
+function ColoredProgress({ value, color }: { value: number; color: string }) {
+  return (
+    <div className="relative h-2 w-full overflow-hidden rounded-full bg-primary/20">
+      <div
+        className="h-full transition-all duration-300"
+        style={{ width: `${Math.min(Math.max(value, 0), 100)}%`, backgroundColor: color }}
+      />
+    </div>
+  );
+}
 
 function App() {
   const [copiedToken, setCopiedToken] = useState<string | null>(null);
@@ -81,7 +129,7 @@ function App() {
             </div>
             <div className="flex items-center gap-3">
               <div className="h-12 w-12 rounded-[var(--radius)] bg-primary" />
-              <div className="h-12 w-12 rounded-[var(--radius)]" style={{ backgroundColor: 'var(--secondary-500)' }} />
+              <div className="h-12 w-12 rounded-[var(--radius)]" style={{ backgroundColor: "var(--secondary-500)" }} />
               <div>
                 <div className="font-medium">Brand Colors</div>
                 <div className="text-sm text-muted-foreground">Blue & Purple</div>
@@ -95,17 +143,17 @@ function App() {
         {/* Design Tokens Section */}
         <section className="mb-16">
           <h2 className="text-2xl font-bold mb-6">Design Tokens</h2>
-          
+
           <div className="grid gap-8">
             {/* Primary Color Palette */}
-            <DSCard>
-              <DSCardHeader>
-                <DSCardTitle>Primary Color Palette - Blue</DSCardTitle>
-                <DSCardDescription>Primary brand colors based on #3153fa</DSCardDescription>
-              </DSCardHeader>
-              <DSCardContent>
+            <Card>
+              <CardHeader>
+                <CardTitle>Primary Color Palette — Blue</CardTitle>
+                <CardDescription>Primary brand colors based on #3153fa</CardDescription>
+              </CardHeader>
+              <CardContent>
                 <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-                  <ColorSwatch color="var(--primary-50)" name="Primary 50" varName="--primary-50" />
+                  <ColorSwatch color="var(--primary-50)"  name="Primary 50"  varName="--primary-50"  />
                   <ColorSwatch color="var(--primary-100)" name="Primary 100" varName="--primary-100" />
                   <ColorSwatch color="var(--primary-200)" name="Primary 200" varName="--primary-200" />
                   <ColorSwatch color="var(--primary-300)" name="Primary 300" varName="--primary-300" />
@@ -116,18 +164,18 @@ function App() {
                   <ColorSwatch color="var(--primary-800)" name="Primary 800" varName="--primary-800" />
                   <ColorSwatch color="var(--primary-900)" name="Primary 900" varName="--primary-900" />
                 </div>
-              </DSCardContent>
-            </DSCard>
+              </CardContent>
+            </Card>
 
             {/* Secondary Color Palette */}
-            <DSCard>
-              <DSCardHeader>
-                <DSCardTitle>Secondary Color Palette - Purple</DSCardTitle>
-                <DSCardDescription>Complementary purple shades for accent and variety</DSCardDescription>
-              </DSCardHeader>
-              <DSCardContent>
+            <Card>
+              <CardHeader>
+                <CardTitle>Secondary Color Palette — Purple</CardTitle>
+                <CardDescription>Complementary purple shades for accent and variety</CardDescription>
+              </CardHeader>
+              <CardContent>
                 <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-                  <ColorSwatch color="var(--secondary-50)" name="Secondary 50" varName="--secondary-50" />
+                  <ColorSwatch color="var(--secondary-50)"  name="Secondary 50"  varName="--secondary-50"  />
                   <ColorSwatch color="var(--secondary-100)" name="Secondary 100" varName="--secondary-100" />
                   <ColorSwatch color="var(--secondary-200)" name="Secondary 200" varName="--secondary-200" />
                   <ColorSwatch color="var(--secondary-300)" name="Secondary 300" varName="--secondary-300" />
@@ -138,18 +186,18 @@ function App() {
                   <ColorSwatch color="var(--secondary-800)" name="Secondary 800" varName="--secondary-800" />
                   <ColorSwatch color="var(--secondary-900)" name="Secondary 900" varName="--secondary-900" />
                 </div>
-              </DSCardContent>
-            </DSCard>
+              </CardContent>
+            </Card>
 
             {/* Neutral Colors */}
-            <DSCard>
-              <DSCardHeader>
-                <DSCardTitle>Neutral Colors</DSCardTitle>
-                <DSCardDescription>Neutral color scale for text and backgrounds</DSCardDescription>
-              </DSCardHeader>
-              <DSCardContent>
+            <Card>
+              <CardHeader>
+                <CardTitle>Neutral Colors</CardTitle>
+                <CardDescription>Neutral color scale for text and backgrounds</CardDescription>
+              </CardHeader>
+              <CardContent>
                 <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-                  <ColorSwatch color="var(--neutral-50)" name="Neutral 50" varName="--neutral-50" />
+                  <ColorSwatch color="var(--neutral-50)"  name="Neutral 50"  varName="--neutral-50"  />
                   <ColorSwatch color="var(--neutral-100)" name="Neutral 100" varName="--neutral-100" />
                   <ColorSwatch color="var(--neutral-200)" name="Neutral 200" varName="--neutral-200" />
                   <ColorSwatch color="var(--neutral-300)" name="Neutral 300" varName="--neutral-300" />
@@ -160,126 +208,141 @@ function App() {
                   <ColorSwatch color="var(--neutral-800)" name="Neutral 800" varName="--neutral-800" />
                   <ColorSwatch color="var(--neutral-900)" name="Neutral 900" varName="--neutral-900" />
                 </div>
-              </DSCardContent>
-            </DSCard>
+              </CardContent>
+            </Card>
 
             {/* Color Combinations */}
-            <DSCard>
-              <DSCardHeader>
-                <DSCardTitle>Color Combinations</DSCardTitle>
-                <DSCardDescription>Examples of primary and secondary colors working together</DSCardDescription>
-              </DSCardHeader>
-              <DSCardContent>
+            <Card>
+              <CardHeader>
+                <CardTitle>Color Combinations</CardTitle>
+                <CardDescription>Examples of primary and secondary colors working together</CardDescription>
+              </CardHeader>
+              <CardContent>
                 <div className="grid md:grid-cols-2 gap-6">
                   <div className="space-y-3">
                     <div className="text-sm font-medium mb-2">Buttons</div>
                     <div className="flex flex-wrap gap-2">
-                      <button className="px-4 py-2 rounded-[var(--radius)] bg-primary text-white font-medium">Primary Blue</button>
-                      <button className="px-4 py-2 rounded-[var(--radius)] text-white font-medium" style={{ backgroundColor: 'var(--secondary-500)' }}>Secondary Purple</button>
+                      <Button>Primary Blue</Button>
+                      <button
+                        className="px-4 py-2 rounded-[var(--radius)] text-white font-medium"
+                        style={{ backgroundColor: "var(--secondary-500)" }}
+                      >
+                        Secondary Purple
+                      </button>
                     </div>
                   </div>
                   <div className="space-y-3">
                     <div className="text-sm font-medium mb-2">Badges</div>
                     <div className="flex flex-wrap gap-2">
-                      <span className="px-3 py-1 rounded-full bg-primary text-white text-sm font-medium">Blue Badge</span>
-                      <span className="px-3 py-1 rounded-full text-white text-sm font-medium" style={{ backgroundColor: 'var(--secondary-500)' }}>Purple Badge</span>
-                      <span className="px-3 py-1 rounded-full border-2 text-sm font-medium" style={{ borderColor: 'var(--primary-500)', color: 'var(--primary-500)' }}>Blue Outline</span>
-                      <span className="px-3 py-1 rounded-full border-2 text-sm font-medium" style={{ borderColor: 'var(--secondary-500)', color: 'var(--secondary-500)' }}>Purple Outline</span>
+                      <Badge>Blue Badge</Badge>
+                      <span
+                        className="inline-flex items-center rounded-[var(--radius-sm)] px-2 py-0.5 text-xs font-medium text-white"
+                        style={{ backgroundColor: "var(--secondary-500)" }}
+                      >
+                        Purple Badge
+                      </span>
+                      <Badge variant="outline">Outline</Badge>
                     </div>
                   </div>
                   <div className="space-y-3">
                     <div className="text-sm font-medium mb-2">Gradient</div>
-                    <div className="h-20 rounded-[var(--radius)] shadow-sm" style={{ background: 'linear-gradient(135deg, var(--primary-500) 0%, var(--secondary-500) 100%)' }} />
+                    <div
+                      className="h-20 rounded-[var(--radius)] shadow-sm"
+                      style={{ background: "linear-gradient(135deg, var(--primary-500) 0%, var(--secondary-500) 100%)" }}
+                    />
                   </div>
                   <div className="space-y-3">
                     <div className="text-sm font-medium mb-2">Complementary Backgrounds</div>
                     <div className="grid grid-cols-2 gap-2">
-                      <div className="h-16 rounded-[var(--radius)] flex items-center justify-center text-sm font-medium" style={{ backgroundColor: 'var(--primary-50)', color: 'var(--primary-700)' }}>Blue Light</div>
-                      <div className="h-16 rounded-[var(--radius)] flex items-center justify-center text-sm font-medium" style={{ backgroundColor: 'var(--secondary-50)', color: 'var(--secondary-700)' }}>Purple Light</div>
+                      <div
+                        className="h-16 rounded-[var(--radius)] flex items-center justify-center text-sm font-medium"
+                        style={{ backgroundColor: "var(--primary-50)", color: "var(--primary-700)" }}
+                      >
+                        Blue Light
+                      </div>
+                      <div
+                        className="h-16 rounded-[var(--radius)] flex items-center justify-center text-sm font-medium"
+                        style={{ backgroundColor: "var(--secondary-50)", color: "var(--secondary-700)" }}
+                      >
+                        Purple Light
+                      </div>
                     </div>
                   </div>
                 </div>
-              </DSCardContent>
-            </DSCard>
+              </CardContent>
+            </Card>
 
             {/* Semantic Colors */}
-            <DSCard>
-              <DSCardHeader>
-                <DSCardTitle>Semantic Colors</DSCardTitle>
-                <DSCardDescription>Colors for success, warning, error, and info states</DSCardDescription>
-              </DSCardHeader>
-              <DSCardContent>
+            <Card>
+              <CardHeader>
+                <CardTitle>Semantic Colors</CardTitle>
+                <CardDescription>Colors for success, warning, error, and info states</CardDescription>
+              </CardHeader>
+              <CardContent>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   <ColorSwatch color="var(--success)" name="Success" varName="--success" />
                   <ColorSwatch color="var(--warning)" name="Warning" varName="--warning" />
-                  <ColorSwatch color="var(--error)" name="Error" varName="--error" />
-                  <ColorSwatch color="var(--info)" name="Info" varName="--info" />
+                  <ColorSwatch color="var(--error)"   name="Error"   varName="--error"   />
+                  <ColorSwatch color="var(--info)"    name="Info"    varName="--info"    />
                 </div>
-              </DSCardContent>
-            </DSCard>
+              </CardContent>
+            </Card>
 
             {/* Spacing */}
-            <DSCard>
-              <DSCardHeader>
-                <DSCardTitle>Spacing Scale</DSCardTitle>
-                <DSCardDescription>Consistent spacing tokens for layouts</DSCardDescription>
-              </DSCardHeader>
-              <DSCardContent>
+            <Card>
+              <CardHeader>
+                <CardTitle>Spacing Scale</CardTitle>
+                <CardDescription>Consistent spacing tokens for layouts</CardDescription>
+              </CardHeader>
+              <CardContent>
                 <div className="space-y-1">
-                  <TokenRow name="Extra Small" value="0.25rem (4px)" variable="--spacing-xs" />
-                  <TokenRow name="Small" value="0.5rem (8px)" variable="--spacing-sm" />
-                  <TokenRow name="Medium" value="1rem (16px)" variable="--spacing-md" />
-                  <TokenRow name="Large" value="1.5rem (24px)" variable="--spacing-lg" />
-                  <TokenRow name="Extra Large" value="2rem (32px)" variable="--spacing-xl" />
-                  <TokenRow name="2X Large" value="3rem (48px)" variable="--spacing-2xl" />
+                  <TokenRow name="Extra Small" value="0.25rem (4px)"  variable="--spacing-xs"  />
+                  <TokenRow name="Small"       value="0.5rem (8px)"   variable="--spacing-sm"  />
+                  <TokenRow name="Medium"      value="1rem (16px)"    variable="--spacing-md"  />
+                  <TokenRow name="Large"       value="1.5rem (24px)"  variable="--spacing-lg"  />
+                  <TokenRow name="Extra Large" value="2rem (32px)"    variable="--spacing-xl"  />
+                  <TokenRow name="2X Large"    value="3rem (48px)"    variable="--spacing-2xl" />
                 </div>
-              </DSCardContent>
-            </DSCard>
+              </CardContent>
+            </Card>
 
             {/* Border Radius */}
-            <DSCard>
-              <DSCardHeader>
-                <DSCardTitle>Border Radius</DSCardTitle>
-                <DSCardDescription>Rounded corner values</DSCardDescription>
-              </DSCardHeader>
-              <DSCardContent>
+            <Card>
+              <CardHeader>
+                <CardTitle>Border Radius</CardTitle>
+                <CardDescription>Rounded corner values</CardDescription>
+              </CardHeader>
+              <CardContent>
                 <div className="space-y-1">
-                  <TokenRow name="Base Radius" value="0.5rem (8px)" variable="--radius" />
-                  <TokenRow name="Small" value="calc(--radius - 4px)" variable="--radius-sm" />
-                  <TokenRow name="Medium" value="calc(--radius - 2px)" variable="--radius-md" />
-                  <TokenRow name="Large" value="--radius" variable="--radius-lg" />
-                  <TokenRow name="Extra Large" value="calc(--radius + 4px)" variable="--radius-xl" />
+                  <TokenRow name="Base Radius" value="0.5rem (8px)"          variable="--radius"    />
+                  <TokenRow name="Small"        value="calc(--radius - 4px)" variable="--radius-sm" />
+                  <TokenRow name="Medium"       value="calc(--radius - 2px)" variable="--radius-md" />
+                  <TokenRow name="Large"        value="--radius"             variable="--radius-lg" />
+                  <TokenRow name="Extra Large"  value="calc(--radius + 4px)" variable="--radius-xl" />
                 </div>
-              </DSCardContent>
-            </DSCard>
+              </CardContent>
+            </Card>
 
             {/* Shadows */}
-            <DSCard>
-              <DSCardHeader>
-                <DSCardTitle>Shadow System</DSCardTitle>
-                <DSCardDescription>Elevation and depth through shadows</DSCardDescription>
-              </DSCardHeader>
-              <DSCardContent>
+            <Card>
+              <CardHeader>
+                <CardTitle>Shadow System</CardTitle>
+                <CardDescription>Elevation and depth through shadows</CardDescription>
+              </CardHeader>
+              <CardContent>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <div className="flex flex-col gap-2">
-                    <div className="h-20 rounded-[var(--radius)] bg-card border border-border" style={{ boxShadow: "var(--shadow-sm)" }} />
-                    <div className="text-sm font-medium">Small</div>
-                  </div>
-                  <div className="flex flex-col gap-2">
-                    <div className="h-20 rounded-[var(--radius)] bg-card border border-border" style={{ boxShadow: "var(--shadow-md)" }} />
-                    <div className="text-sm font-medium">Medium</div>
-                  </div>
-                  <div className="flex flex-col gap-2">
-                    <div className="h-20 rounded-[var(--radius)] bg-card border border-border" style={{ boxShadow: "var(--shadow-lg)" }} />
-                    <div className="text-sm font-medium">Large</div>
-                  </div>
-                  <div className="flex flex-col gap-2">
-                    <div className="h-20 rounded-[var(--radius)] bg-card border border-border" style={{ boxShadow: "var(--shadow-xl)" }} />
-                    <div className="text-sm font-medium">Extra Large</div>
-                  </div>
+                  {(["sm", "md", "lg", "xl"] as const).map((s) => (
+                    <div key={s} className="flex flex-col gap-2">
+                      <div
+                        className="h-20 rounded-[var(--radius)] bg-card border border-border"
+                        style={{ boxShadow: `var(--shadow-${s})` }}
+                      />
+                      <div className="text-sm font-medium capitalize">{s === "sm" ? "Small" : s === "md" ? "Medium" : s === "lg" ? "Large" : "Extra Large"}</div>
+                    </div>
+                  ))}
                 </div>
-              </DSCardContent>
-            </DSCard>
+              </CardContent>
+            </Card>
           </div>
         </section>
 
@@ -289,423 +352,471 @@ function App() {
 
           <div className="grid gap-8">
             {/* Buttons */}
-            <DSCard>
-              <DSCardHeader>
-                <DSCardTitle>Buttons</DSCardTitle>
-                <DSCardDescription>Button variants and sizes</DSCardDescription>
-              </DSCardHeader>
-              <DSCardContent>
+            <Card>
+              <CardHeader>
+                <CardTitle>Buttons</CardTitle>
+                <CardDescription>Button variants and sizes</CardDescription>
+              </CardHeader>
+              <CardContent>
                 <div className="space-y-6">
                   <div>
                     <h4 className="text-sm font-medium mb-3">Variants</h4>
                     <div className="flex flex-wrap gap-3">
-                      <DSButton variant="primary">Primary Blue</DSButton>
-                      <button className="inline-flex items-center justify-center gap-2 rounded-[var(--radius)] font-medium transition-colors h-10 px-4 text-white" style={{ backgroundColor: 'var(--secondary-500)' }}>Secondary Purple</button>
-                      <DSButton variant="secondary">Neutral</DSButton>
-                      <DSButton variant="outline">Outline</DSButton>
-                      <DSButton variant="ghost">Ghost</DSButton>
-                      <DSButton variant="danger">Danger</DSButton>
+                      <Button>Primary</Button>
+                      <Button variant="secondary">Secondary</Button>
+                      <Button variant="outline">Outline</Button>
+                      <Button variant="ghost">Ghost</Button>
+                      <Button variant="destructive">Destructive</Button>
+                      <Button variant="link">Link</Button>
                     </div>
                   </div>
                   <div>
                     <h4 className="text-sm font-medium mb-3">Sizes</h4>
                     <div className="flex flex-wrap items-center gap-3">
-                      <DSButton size="sm">Small</DSButton>
-                      <DSButton size="md">Medium</DSButton>
-                      <DSButton size="lg">Large</DSButton>
+                      <Button size="sm">Small</Button>
+                      <Button size="default">Default</Button>
+                      <Button size="lg">Large</Button>
+                      <Button size="icon"><Check className="h-4 w-4" /></Button>
                     </div>
                   </div>
                   <div>
                     <h4 className="text-sm font-medium mb-3">States</h4>
                     <div className="flex flex-wrap gap-3">
-                      <DSButton>Default</DSButton>
-                      <DSButton disabled>Disabled</DSButton>
+                      <Button>Default</Button>
+                      <Button disabled>Disabled</Button>
                     </div>
                   </div>
                 </div>
-              </DSCardContent>
-            </DSCard>
+              </CardContent>
+            </Card>
 
             {/* Inputs */}
-            <DSCard>
-              <DSCardHeader>
-                <DSCardTitle>Inputs</DSCardTitle>
-                <DSCardDescription>Form input components</DSCardDescription>
-              </DSCardHeader>
-              <DSCardContent>
+            <Card>
+              <CardHeader>
+                <CardTitle>Inputs</CardTitle>
+                <CardDescription>Form input components</CardDescription>
+              </CardHeader>
+              <CardContent>
                 <div className="space-y-4 max-w-md">
                   <div>
-                    <label className="block text-sm font-medium mb-2">Text Input</label>
-                    <DSInput placeholder="Enter text..." />
+                    <Label className="mb-2">Text Input</Label>
+                    <Input placeholder="Enter text..." />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-2">With Error</label>
-                    <DSInput placeholder="Invalid input" error />
+                    <Label className="mb-2">With Error</Label>
+                    <Input placeholder="Invalid input" aria-invalid />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-2">Disabled</label>
-                    <DSInput placeholder="Disabled input" disabled />
+                    <Label className="mb-2">Disabled</Label>
+                    <Input placeholder="Disabled input" disabled />
                   </div>
                 </div>
-              </DSCardContent>
-            </DSCard>
+              </CardContent>
+            </Card>
 
             {/* Textarea */}
-            <DSCard>
-              <DSCardHeader>
-                <DSCardTitle>Textarea</DSCardTitle>
-                <DSCardDescription>Multi-line text input</DSCardDescription>
-              </DSCardHeader>
-              <DSCardContent>
+            <Card>
+              <CardHeader>
+                <CardTitle>Textarea</CardTitle>
+                <CardDescription>Multi-line text input</CardDescription>
+              </CardHeader>
+              <CardContent>
                 <div className="space-y-4 max-w-md">
-                  <DSTextarea placeholder="Enter your message..." rows={4} />
-                  <DSTextarea placeholder="Error state" error rows={3} />
+                  <Textarea placeholder="Enter your message..." rows={4} />
+                  <Textarea placeholder="Error state" aria-invalid rows={3} />
                 </div>
-              </DSCardContent>
-            </DSCard>
+              </CardContent>
+            </Card>
 
             {/* Select */}
-            <DSCard>
-              <DSCardHeader>
-                <DSCardTitle>Select</DSCardTitle>
-                <DSCardDescription>Dropdown selection</DSCardDescription>
-              </DSCardHeader>
-              <DSCardContent>
+            <Card>
+              <CardHeader>
+                <CardTitle>Select</CardTitle>
+                <CardDescription>Dropdown selection</CardDescription>
+              </CardHeader>
+              <CardContent>
                 <div className="space-y-4 max-w-md">
-                  <DSSelect>
+                  <NativeSelect>
                     <option value="">Choose an option...</option>
                     <option value="1">Option 1</option>
                     <option value="2">Option 2</option>
                     <option value="3">Option 3</option>
-                  </DSSelect>
-                  <DSSelect error>
+                  </NativeSelect>
+                  <NativeSelect error>
                     <option value="">Error state</option>
-                  </DSSelect>
+                  </NativeSelect>
                 </div>
-              </DSCardContent>
-            </DSCard>
+              </CardContent>
+            </Card>
 
             {/* Badges */}
-            <DSCard>
-              <DSCardHeader>
-                <DSCardTitle>Badges</DSCardTitle>
-                <DSCardDescription>Label and status indicators</DSCardDescription>
-              </DSCardHeader>
-              <DSCardContent>
+            <Card>
+              <CardHeader>
+                <CardTitle>Badges</CardTitle>
+                <CardDescription>Label and status indicators</CardDescription>
+              </CardHeader>
+              <CardContent>
                 <div className="flex flex-wrap gap-2">
-                  <DSBadge variant="default">Default</DSBadge>
-                  <DSBadge variant="primary">Primary Blue</DSBadge>
-                  <span className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium text-white transition-colors" style={{ backgroundColor: 'var(--secondary-500)' }}>Secondary Purple</span>
-                  <DSBadge variant="success">Success</DSBadge>
-                  <DSBadge variant="warning">Warning</DSBadge>
-                  <DSBadge variant="error">Error</DSBadge>
-                  <DSBadge variant="outline">Outline</DSBadge>
+                  <Badge>Default</Badge>
+                  <Badge variant="secondary">Secondary</Badge>
+                  <Badge variant="destructive">Destructive</Badge>
+                  <Badge variant="outline">Outline</Badge>
+                  <Badge className="border-transparent bg-success text-success-foreground">Success</Badge>
+                  <Badge className="border-transparent bg-warning text-warning-foreground">Warning</Badge>
+                  <Badge className="border-transparent" style={{ backgroundColor: "var(--info)", color: "white" }}>Info</Badge>
                 </div>
-              </DSCardContent>
-            </DSCard>
+              </CardContent>
+            </Card>
 
             {/* Alerts */}
-            <DSCard>
-              <DSCardHeader>
-                <DSCardTitle>Alerts</DSCardTitle>
-                <DSCardDescription>Notification and message components</DSCardDescription>
-              </DSCardHeader>
-              <DSCardContent>
+            <Card>
+              <CardHeader>
+                <CardTitle>Alerts</CardTitle>
+                <CardDescription>Notification and message components</CardDescription>
+              </CardHeader>
+              <CardContent>
                 <div className="space-y-4">
-                  <DSAlert variant="default">
-                    <DSAlertTitle>Default Alert</DSAlertTitle>
-                    <DSAlertDescription>
-                      This is a default alert message with some helpful information.
-                    </DSAlertDescription>
-                  </DSAlert>
-                  <DSAlert variant="success">
-                    <DSAlertTitle>Success</DSAlertTitle>
-                    <DSAlertDescription>
-                      Your changes have been saved successfully.
-                    </DSAlertDescription>
-                  </DSAlert>
-                  <DSAlert variant="warning">
-                    <DSAlertTitle>Warning</DSAlertTitle>
-                    <DSAlertDescription>
-                      Please review your input before continuing.
-                    </DSAlertDescription>
-                  </DSAlert>
-                  <DSAlert variant="error">
-                    <DSAlertTitle>Error</DSAlertTitle>
-                    <DSAlertDescription>
-                      An error occurred while processing your request.
-                    </DSAlertDescription>
-                  </DSAlert>
-                  <DSAlert variant="info">
-                    <DSAlertTitle>Info</DSAlertTitle>
-                    <DSAlertDescription>
-                      Here's some useful information about this feature.
-                    </DSAlertDescription>
-                  </DSAlert>
+                  <Alert>
+                    <Info className="h-4 w-4" />
+                    <AlertTitle>Default Alert</AlertTitle>
+                    <AlertDescription>This is a default alert message with some helpful information.</AlertDescription>
+                  </Alert>
+                  <Alert className="bg-[#ecfdf5] text-[#065f46]">
+                    <CheckCircle2 className="h-4 w-4" />
+                    <AlertTitle>Success</AlertTitle>
+                    <AlertDescription>Your changes have been saved successfully.</AlertDescription>
+                  </Alert>
+                  <Alert className="bg-[#fffbeb] text-[#92400e]">
+                    <AlertTriangle className="h-4 w-4" />
+                    <AlertTitle>Warning</AlertTitle>
+                    <AlertDescription>Please review your input before continuing.</AlertDescription>
+                  </Alert>
+                  <Alert className="bg-[#fef2f2] text-[#991b1b]">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertTitle>Error</AlertTitle>
+                    <AlertDescription>An error occurred while processing your request.</AlertDescription>
+                  </Alert>
+                  <Alert className="bg-[#eff6ff] text-[#1e40af]">
+                    <Info className="h-4 w-4" />
+                    <AlertTitle>Info</AlertTitle>
+                    <AlertDescription>Here's some useful information about this feature.</AlertDescription>
+                  </Alert>
                 </div>
-              </DSCardContent>
-            </DSCard>
+              </CardContent>
+            </Card>
 
             {/* Avatars */}
-            <DSCard>
-              <DSCardHeader>
-                <DSCardTitle>Avatars</DSCardTitle>
-                <DSCardDescription>User profile images with fallbacks</DSCardDescription>
-              </DSCardHeader>
-              <DSCardContent>
+            <Card>
+              <CardHeader>
+                <CardTitle>Avatars</CardTitle>
+                <CardDescription>User profile images with fallbacks</CardDescription>
+              </CardHeader>
+              <CardContent>
                 <div className="space-y-4">
                   <div>
                     <h4 className="text-sm font-medium mb-3">Sizes</h4>
                     <div className="flex items-center gap-3">
-                      <DSAvatar size="sm" fallback="SM" />
-                      <DSAvatar size="md" fallback="MD" />
-                      <DSAvatar size="lg" fallback="LG" />
-                      <DSAvatar size="xl" fallback="XL" />
+                      <Avatar className="h-8 w-8 text-xs">
+                        <AvatarFallback>SM</AvatarFallback>
+                      </Avatar>
+                      <Avatar className="h-10 w-10 text-sm">
+                        <AvatarFallback>MD</AvatarFallback>
+                      </Avatar>
+                      <Avatar className="h-12 w-12 text-base">
+                        <AvatarFallback>LG</AvatarFallback>
+                      </Avatar>
+                      <Avatar className="h-16 w-16 text-lg">
+                        <AvatarFallback>XL</AvatarFallback>
+                      </Avatar>
                     </div>
                   </div>
                 </div>
-              </DSCardContent>
-            </DSCard>
+              </CardContent>
+            </Card>
 
             {/* Checkboxes */}
-            <DSCard>
-              <DSCardHeader>
-                <DSCardTitle>Checkboxes</DSCardTitle>
-                <DSCardDescription>Multiple selection controls</DSCardDescription>
-              </DSCardHeader>
-              <DSCardContent>
+            <Card>
+              <CardHeader>
+                <CardTitle>Checkboxes</CardTitle>
+                <CardDescription>Multiple selection controls</CardDescription>
+              </CardHeader>
+              <CardContent>
                 <div className="space-y-3">
-                  <DSCheckbox label="Option 1" defaultChecked />
-                  <DSCheckbox label="Option 2" />
-                  <DSCheckbox label="Disabled" disabled />
-                  <DSCheckbox label="Disabled Checked" disabled defaultChecked />
+                  <div className="flex items-center gap-2">
+                    <Checkbox id="cb1" defaultChecked />
+                    <Label htmlFor="cb1">Option 1</Label>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Checkbox id="cb2" />
+                    <Label htmlFor="cb2">Option 2</Label>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Checkbox id="cb3" disabled />
+                    <Label htmlFor="cb3" className="opacity-50 cursor-not-allowed">Disabled</Label>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Checkbox id="cb4" disabled defaultChecked />
+                    <Label htmlFor="cb4" className="opacity-50 cursor-not-allowed">Disabled Checked</Label>
+                  </div>
                 </div>
-              </DSCardContent>
-            </DSCard>
+              </CardContent>
+            </Card>
 
             {/* Radio Buttons */}
-            <DSCard>
-              <DSCardHeader>
-                <DSCardTitle>Radio Buttons</DSCardTitle>
-                <DSCardDescription>Single selection controls</DSCardDescription>
-              </DSCardHeader>
-              <DSCardContent>
-                <div className="space-y-3">
-                  <DSRadio name="radio-group" label="Option 1" defaultChecked />
-                  <DSRadio name="radio-group" label="Option 2" />
-                  <DSRadio name="radio-group" label="Option 3" />
-                  <DSRadio name="disabled" label="Disabled" disabled />
-                </div>
-              </DSCardContent>
-            </DSCard>
+            <Card>
+              <CardHeader>
+                <CardTitle>Radio Buttons</CardTitle>
+                <CardDescription>Single selection controls</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <RadioGroup defaultValue="option1" className="space-y-3">
+                  <div className="flex items-center gap-2">
+                    <RadioGroupItem value="option1" id="r1" />
+                    <Label htmlFor="r1">Option 1</Label>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <RadioGroupItem value="option2" id="r2" />
+                    <Label htmlFor="r2">Option 2</Label>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <RadioGroupItem value="option3" id="r3" />
+                    <Label htmlFor="r3">Option 3</Label>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <RadioGroupItem value="disabled" id="r4" disabled />
+                    <Label htmlFor="r4" className="opacity-50 cursor-not-allowed">Disabled</Label>
+                  </div>
+                </RadioGroup>
+              </CardContent>
+            </Card>
 
             {/* Switches */}
-            <DSCard>
-              <DSCardHeader>
-                <DSCardTitle>Switches</DSCardTitle>
-                <DSCardDescription>Toggle controls</DSCardDescription>
-              </DSCardHeader>
-              <DSCardContent>
+            <Card>
+              <CardHeader>
+                <CardTitle>Switches</CardTitle>
+                <CardDescription>Toggle controls</CardDescription>
+              </CardHeader>
+              <CardContent>
                 <div className="space-y-3">
-                  <DSSwitch label="Enable notifications" defaultChecked />
-                  <DSSwitch label="Auto-save" />
-                  <DSSwitch label="Disabled" disabled />
-                  <DSSwitch label="Disabled Checked" disabled defaultChecked />
+                  <div className="flex items-center gap-2">
+                    <Switch id="sw1" defaultChecked />
+                    <Label htmlFor="sw1">Enable notifications</Label>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Switch id="sw2" />
+                    <Label htmlFor="sw2">Auto-save</Label>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Switch id="sw3" disabled />
+                    <Label htmlFor="sw3" className="opacity-50 cursor-not-allowed">Disabled</Label>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Switch id="sw4" disabled defaultChecked />
+                    <Label htmlFor="sw4" className="opacity-50 cursor-not-allowed">Disabled Checked</Label>
+                  </div>
                 </div>
-              </DSCardContent>
-            </DSCard>
+              </CardContent>
+            </Card>
 
             {/* Progress */}
-            <DSCard>
-              <DSCardHeader>
-                <DSCardTitle>Progress Bars</DSCardTitle>
-                <DSCardDescription>Progress indicators</DSCardDescription>
-              </DSCardHeader>
-              <DSCardContent>
+            <Card>
+              <CardHeader>
+                <CardTitle>Progress Bars</CardTitle>
+                <CardDescription>Progress indicators</CardDescription>
+              </CardHeader>
+              <CardContent>
                 <div className="space-y-6">
                   <div>
                     <div className="flex justify-between text-sm mb-2">
-                      <span>Default</span>
+                      <span>Default (gradient)</span>
                       <span className="text-muted-foreground">25%</span>
                     </div>
-                    <DSProgress value={25} />
+                    <Progress value={25} />
                   </div>
                   <div>
                     <div className="flex justify-between text-sm mb-2">
                       <span>Success</span>
                       <span className="text-muted-foreground">50%</span>
                     </div>
-                    <DSProgress value={50} variant="success" />
+                    <ColoredProgress value={50} color="var(--success)" />
                   </div>
                   <div>
                     <div className="flex justify-between text-sm mb-2">
                       <span>Warning</span>
                       <span className="text-muted-foreground">75%</span>
                     </div>
-                    <DSProgress value={75} variant="warning" />
+                    <ColoredProgress value={75} color="var(--warning)" />
                   </div>
                   <div>
                     <div className="flex justify-between text-sm mb-2">
                       <span>Error</span>
                       <span className="text-muted-foreground">100%</span>
                     </div>
-                    <DSProgress value={100} variant="error" />
+                    <ColoredProgress value={100} color="var(--error)" />
                   </div>
                 </div>
-              </DSCardContent>
-            </DSCard>
+              </CardContent>
+            </Card>
 
             {/* Spinners */}
-            <DSCard>
-              <DSCardHeader>
-                <DSCardTitle>Spinners</DSCardTitle>
-                <DSCardDescription>Loading indicators</DSCardDescription>
-              </DSCardHeader>
-              <DSCardContent>
+            <Card>
+              <CardHeader>
+                <CardTitle>Spinners</CardTitle>
+                <CardDescription>Loading indicators</CardDescription>
+              </CardHeader>
+              <CardContent>
                 <div className="flex items-center gap-8">
                   <div className="flex flex-col items-center gap-2">
-                    <DSSpinner size="sm" />
+                    <Spinner size="sm" />
                     <span className="text-sm text-muted-foreground">Small</span>
                   </div>
                   <div className="flex flex-col items-center gap-2">
-                    <DSSpinner size="md" />
+                    <Spinner size="md" />
                     <span className="text-sm text-muted-foreground">Medium</span>
                   </div>
                   <div className="flex flex-col items-center gap-2">
-                    <DSSpinner size="lg" />
+                    <Spinner size="lg" />
                     <span className="text-sm text-muted-foreground">Large</span>
                   </div>
                 </div>
-              </DSCardContent>
-            </DSCard>
+              </CardContent>
+            </Card>
 
             {/* Skeletons */}
-            <DSCard>
-              <DSCardHeader>
-                <DSCardTitle>Skeletons</DSCardTitle>
-                <DSCardDescription>Loading placeholders</DSCardDescription>
-              </DSCardHeader>
-              <DSCardContent>
+            <Card>
+              <CardHeader>
+                <CardTitle>Skeletons</CardTitle>
+                <CardDescription>Loading placeholders</CardDescription>
+              </CardHeader>
+              <CardContent>
                 <div className="space-y-4">
                   <div className="space-y-2">
-                    <DSSkeleton className="h-4 w-full" />
-                    <DSSkeleton className="h-4 w-3/4" />
-                    <DSSkeleton className="h-4 w-1/2" />
+                    <Skeleton className="h-4 w-full" />
+                    <Skeleton className="h-4 w-3/4" />
+                    <Skeleton className="h-4 w-1/2" />
                   </div>
                   <div className="flex items-center gap-4">
-                    <DSSkeleton className="h-12 w-12 rounded-full" />
+                    <Skeleton className="h-12 w-12 rounded-full" />
                     <div className="space-y-2 flex-1">
-                      <DSSkeleton className="h-4 w-full" />
-                      <DSSkeleton className="h-4 w-2/3" />
+                      <Skeleton className="h-4 w-full" />
+                      <Skeleton className="h-4 w-2/3" />
                     </div>
                   </div>
                 </div>
-              </DSCardContent>
-            </DSCard>
+              </CardContent>
+            </Card>
 
             {/* Cards */}
-            <DSCard>
-              <DSCardHeader>
-                <DSCardTitle>Cards</DSCardTitle>
-                <DSCardDescription>Container components with header, content, and footer</DSCardDescription>
-              </DSCardHeader>
-              <DSCardContent>
+            <Card>
+              <CardHeader>
+                <CardTitle>Cards</CardTitle>
+                <CardDescription>Container components with header, content, and footer</CardDescription>
+              </CardHeader>
+              <CardContent>
                 <div className="grid md:grid-cols-2 gap-4">
-                  <DSCard>
-                    <DSCardHeader>
-                      <DSCardTitle>Card Title</DSCardTitle>
-                      <DSCardDescription>Card description goes here</DSCardDescription>
-                    </DSCardHeader>
-                    <DSCardContent>
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Card Title</CardTitle>
+                      <CardDescription>Card description goes here</CardDescription>
+                    </CardHeader>
+                    <CardContent>
                       <p className="text-sm">This is the card content area where you can place any content.</p>
-                    </DSCardContent>
-                    <DSCardFooter className="gap-2">
-                      <DSButton variant="outline" size="sm">Cancel</DSButton>
-                      <DSButton size="sm">Save</DSButton>
-                    </DSCardFooter>
-                  </DSCard>
+                    </CardContent>
+                    <CardFooter className="gap-2">
+                      <Button variant="outline" size="sm">Cancel</Button>
+                      <Button size="sm">Save</Button>
+                    </CardFooter>
+                  </Card>
 
-                  <DSCard>
-                    <DSCardHeader>
-                      <DSCardTitle>Another Card</DSCardTitle>
-                      <DSCardDescription>With different content</DSCardDescription>
-                    </DSCardHeader>
-                    <DSCardContent>
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Another Card</CardTitle>
+                      <CardDescription>With skeleton content</CardDescription>
+                    </CardHeader>
+                    <CardContent>
                       <div className="space-y-2">
-                        <DSSkeleton className="h-4 w-full" />
-                        <DSSkeleton className="h-4 w-4/5" />
-                        <DSSkeleton className="h-4 w-3/5" />
+                        <Skeleton className="h-4 w-full" />
+                        <Skeleton className="h-4 w-4/5" />
+                        <Skeleton className="h-4 w-3/5" />
                       </div>
-                    </DSCardContent>
-                  </DSCard>
+                    </CardContent>
+                  </Card>
                 </div>
-              </DSCardContent>
-            </DSCard>
+              </CardContent>
+            </Card>
           </div>
         </section>
 
         {/* Usage Example */}
         <section>
           <h2 className="text-2xl font-bold mb-6">Usage Example</h2>
-          <DSCard>
-            <DSCardHeader>
-              <DSCardTitle>Complete Form Example</DSCardTitle>
-              <DSCardDescription>A real-world example combining multiple components</DSCardDescription>
-            </DSCardHeader>
-            <DSCardContent>
+          <Card>
+            <CardHeader>
+              <CardTitle>Complete Form Example</CardTitle>
+              <CardDescription>A real-world example combining multiple components</CardDescription>
+            </CardHeader>
+            <CardContent>
               <form className="space-y-6 max-w-2xl">
                 <div className="grid md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium mb-2">First Name</label>
-                    <DSInput placeholder="John" />
+                  <div className="space-y-2">
+                    <Label htmlFor="first-name">First Name</Label>
+                    <Input id="first-name" placeholder="John" />
                   </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-2">Last Name</label>
-                    <DSInput placeholder="Doe" />
+                  <div className="space-y-2">
+                    <Label htmlFor="last-name">Last Name</Label>
+                    <Input id="last-name" placeholder="Doe" />
                   </div>
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium mb-2">Email</label>
-                  <DSInput type="email" placeholder="john.doe@example.com" />
+                <div className="space-y-2">
+                  <Label htmlFor="email">Email</Label>
+                  <Input id="email" type="email" placeholder="john.doe@example.com" />
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium mb-2">Role</label>
-                  <DSSelect>
+                <div className="space-y-2">
+                  <Label>Role</Label>
+                  <NativeSelect>
                     <option value="">Select a role...</option>
                     <option value="developer">Developer</option>
                     <option value="designer">Designer</option>
                     <option value="manager">Manager</option>
-                  </DSSelect>
+                  </NativeSelect>
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium mb-2">Bio</label>
-                  <DSTextarea placeholder="Tell us about yourself..." rows={4} />
+                <div className="space-y-2">
+                  <Label htmlFor="bio">Bio</Label>
+                  <Textarea id="bio" placeholder="Tell us about yourself..." rows={4} />
                 </div>
 
                 <div className="space-y-3">
-                  <DSCheckbox label="I agree to the terms and conditions" />
-                  <DSCheckbox label="Subscribe to newsletter" />
+                  <div className="flex items-center gap-2">
+                    <Checkbox id="terms" />
+                    <Label htmlFor="terms">I agree to the terms and conditions</Label>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Checkbox id="newsletter" />
+                    <Label htmlFor="newsletter">Subscribe to newsletter</Label>
+                  </div>
                 </div>
 
-                <DSSwitch label="Enable notifications" defaultChecked />
+                <div className="flex items-center gap-2">
+                  <Switch id="notifications" defaultChecked />
+                  <Label htmlFor="notifications">Enable notifications</Label>
+                </div>
 
-                <DSAlert variant="info">
-                  <DSAlertTitle>Pro Tip</DSAlertTitle>
-                  <DSAlertDescription>
-                    Make sure all required fields are filled out before submitting.
-                  </DSAlertDescription>
-                </DSAlert>
+                <Alert className="bg-[#eff6ff] text-[#1e40af]">
+                  <Info className="h-4 w-4" />
+                  <AlertTitle>Pro Tip</AlertTitle>
+                  <AlertDescription>Make sure all required fields are filled out before submitting.</AlertDescription>
+                </Alert>
 
                 <div className="flex gap-3">
-                  <DSButton variant="outline">Cancel</DSButton>
-                  <DSButton>Submit Form</DSButton>
+                  <Button variant="outline">Cancel</Button>
+                  <Button>Submit Form</Button>
                 </div>
               </form>
-            </DSCardContent>
-          </DSCard>
+            </CardContent>
+          </Card>
         </section>
       </div>
 
@@ -717,9 +828,14 @@ function App() {
               Design System built with Tailwind CSS v4
             </div>
             <div className="flex items-center gap-2">
-              <DSBadge variant="primary">Primary: #3153fa</DSBadge>
-              <span className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium text-white" style={{ backgroundColor: 'var(--secondary-500)' }}>Secondary: #7c3aed</span>
-              <DSBadge variant="outline">v1.0.0</DSBadge>
+              <Badge>Primary: #3153fa</Badge>
+              <span
+                className="inline-flex items-center rounded-[var(--radius-sm)] px-2 py-0.5 text-xs font-medium text-white"
+                style={{ backgroundColor: "var(--secondary-500)" }}
+              >
+                Secondary: #7c3aed
+              </span>
+              <Badge variant="outline">v1.0.0</Badge>
             </div>
           </div>
         </div>

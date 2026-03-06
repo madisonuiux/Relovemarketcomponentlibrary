@@ -1,7 +1,7 @@
 
-  # Relove Market Component Library
+  # Relove DS
 
-  This is a code bundle for Relove Market Component Library. The original project is available at https://www.figma.com/design/RpxgAPmDPmQ57kVASfS1Mn/Relove-Market-Component-Library.
+  This is a code bundle for Relove DS. The original project is available at https://www.figma.com/design/RpxgAPmDPmQ57kVASfS1Mn/Relove-DS.
 
   ## Running the code
 
