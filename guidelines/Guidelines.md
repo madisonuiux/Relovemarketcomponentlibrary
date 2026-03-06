@@ -1,2 +1,0 @@
-- Use the components from the design system for all relevant elements. Do not create new components when designing pages. 
-- Always ask first before overrwiting or editing code in the components folder.
