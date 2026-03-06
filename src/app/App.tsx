@@ -23,9 +23,8 @@ function Spinner({ size = "md" }: { size?: "sm" | "md" | "lg" }) {
     <div
       className={`animate-spin rounded-full ${sizes[size]}`}
       style={{
-        background: `linear-gradient(white, white) padding-box, linear-gradient(135deg, var(--primary-500) 0%, var(--secondary-500) 100%) border-box`,
-        border: `${borders[size]} solid transparent`,
-        borderTopColor: "white",
+        border: `${borders[size]} solid var(--primary-200)`,
+        borderTopColor: "var(--primary-500)",
       }}
     />
   );
@@ -628,7 +627,7 @@ function App() {
                 <div className="space-y-6">
                   <div>
                     <div className="flex justify-between text-sm mb-2">
-                      <span>Default (gradient)</span>
+                      <span>Default</span>
                       <span className="text-muted-foreground">25%</span>
                     </div>
                     <Progress value={25} />

@@ -48,7 +48,7 @@ function Slider({
             "absolute data-[orientation=horizontal]:h-full data-[orientation=vertical]:w-full",
           )}
           style={{
-            background: "linear-gradient(135deg, var(--primary-500) 0%, var(--secondary-500) 100%)",
+            background: "var(--primary-500)",
           }}
         />
       </SliderPrimitive.Track>

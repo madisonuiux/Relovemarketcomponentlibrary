@@ -46,20 +46,16 @@ function Button({
     asChild?: boolean;
   }) {
   const Comp = asChild ? Slot : "button";
-  const gradientStyle =
+  const defaultStyle =
     !variant || variant === "default"
-      ? {
-          background:
-            "linear-gradient(135deg, var(--primary-500) 0%, var(--secondary-500) 100%)",
-          ...style,
-        }
+      ? { background: "var(--primary-500)", ...style }
       : style;
 
   return (
     <Comp
       data-slot="button"
       className={cn(buttonVariants({ variant, size, className }))}
-      style={gradientStyle}
+      style={defaultStyle}
       {...props}
     />
   );
